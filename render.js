@@ -1,6 +1,7 @@
 window.Render = (function() {
 	var canvas,
-		context;
+		context,
+		scrollAmount;
 
 	canvas = document.createElement("canvas");
 	canvas.width = Math.min(window.innerWidth / 16, window.innerHeight / 9) * 16;
@@ -20,31 +21,37 @@ window.Render = (function() {
 
 	context = canvas.getContext("2d");
 
-	function renderEntity(entity, view, camera) {
-		var widthRatio = canvas.width / view.width,
-			heightRatio = canvas.height / view.height;
+	function renderEntity(entity) {
 		context.fillStyle = entity.color;
-		context.fillRect((Entity.getLeft(entity) - (camera.x - view.width / 2)) * widthRatio, // x
-						 canvas.height - Entity.getTop(entity) * heightRatio, // y
-						 entity.width * widthRatio, // width
-						 entity.height * heightRatio, // height
+		context.fillRect((Entity.getLeft(entity) - scrollAmount), // x
+						 canvas.height - Entity.getTop(entity), // y
+						 entity.width, // width
+						 entity.height, // height
 						 entity.color // color
 		);
 	};
 
 	return {
 		runSystem: function(model) {
+			if(scrollAmount === undefined) {
+				scrollAmount = 0;
+			} else {
+				model.getEntities().filter(function(e) {
+					return e.player === true;
+				}).forEach(function(p) {
+					if(Entity.getLeft(p) - scrollAmount < canvas.width / 3) {
+						scrollAmount = Entity.getLeft(p) - canvas.width / 3;
+					}
+					if(Entity.getRight(p) - scrollAmount > canvas.width * 2 / 3) {
+						scrollAmount = Entity.getRight(p) - canvas.width * 2 / 3;
+					}
+				});
+			}
+
 			context.clearRect(0, 0, canvas.width, canvas.height);
+			
 			model.getEntities().forEach(function(entity) {
-				var clonedEntity;
-				renderEntity(entity, model.getView(), model.getCamera());
-				if(entity.wraps === true) {
-					clonedEntity = Entity.clone(entity);
-					clonedEntity.x += model.getView().width;
-					renderEntity(clonedEntity, model.getView(), model.getCamera());
-					clonedEntity.x -= 2 * model.getView().width;
-					renderEntity(clonedEntity, model.getView(), model.getCamera());
-				}
+				renderEntity(entity);
 			});
 		}
 	};

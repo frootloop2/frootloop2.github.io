@@ -13,6 +13,7 @@ window.Input = (function() {
 			model.getEntities().filter(function(entity) {
 				return entity.player;
 			}).forEach(function(playerEntity) {
+				// movement
 				if(Keyboard.isKeyPressed(leftKey)) {
 					playerEntity.dx = Math.max(playerEntity.dx - acceleration, -maxSpeed);
 				}
@@ -33,30 +34,7 @@ window.Input = (function() {
 					}
 				}
 
-				// pick up item
-				if(Keyboard.isKeyPressedSinceStartOfLastFrame(grabKey)) {
-					if(playerEntity.heldEntity === undefined) {
-						// grab
-						model.getEntities().filter(function(entity) {
-							return entity.grabbable;
-						}).some(function(grabbableEntity) {
-							if(Entity.overlapsEntity(playerEntity, grabbableEntity)) {
-								playerEntity.heldEntity = grabbableEntity;
-								playerEntity.heldEntity.collisionType = "held";
-								playerEntity.heldEntity.x = playerEntity.x;
-								playerEntity.heldEntity.y = playerEntity.y;
-							}
-							// stops trying to grab others once it grabs something
-							return playerEntity.heldEntity !== undefined;
-						});	
-					} else {
-						// drop
-						playerEntity.heldEntity.collisionType = "actor";
-						playerEntity.heldEntity.dy = 0;
-						playerEntity.heldEntity = undefined;
-					}
-				}
-
+				// use door
 				if(Keyboard.isKeyPressedSinceStartOfLastFrame(doorKey)) {
 					model.getEntities().filter(function(entity) {
 						return entity.door;

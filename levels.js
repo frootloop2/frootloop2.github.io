@@ -7,7 +7,7 @@ window.Rooms = [
 			width: 1200,
 			height: 100,
 			color: "#777777",
-			collisionType: "environment"
+			collidable: true
 		},
 		{
 			x: 1200,
@@ -15,7 +15,6 @@ window.Rooms = [
 			width: 50,
 			height: 100,
 			color: "#000000",
-			collisionType: "actor",
 			gravity: false,
 			door: true,
 			doorDestination: 1
@@ -28,35 +27,9 @@ window.Rooms = [
 			width: 50,
 			height: 50,
 			color: "#FF7777",
-			collisionType: "actor",
+			collidable: true,
 			gravity: true,
-			player: true,
-			wraps: true
-		},
-		{
-			x: 900,
-			y: 450,
-			dx: 0,
-			dy: 0,
-			width: 25,
-			height: 25,
-			color: "#7777FF",
-			collisionType: "actor",
-			gravity: true,
-			camera: true,
-			grabbable: true
-		},
-		{
-			x: 800,
-			y: 450,
-			dx: 0,
-			dy: 0,
-			width: 25,
-			height: 25,
-			color: "#FF00FF",
-			collisionType: "actor",
-			gravity: true,
-			grabbable: true
+			player: true
 		}
 	],
 	[
@@ -66,7 +39,7 @@ window.Rooms = [
 			width: 1200,
 			height: 100,
 			color: "#777777",
-			collisionType: "environment"
+			collidable: true
 		},
 		{
 			x: 1200,
@@ -74,7 +47,6 @@ window.Rooms = [
 			width: 50,
 			height: 100,
 			color: "#000000",
-			collisionType: "actor",
 			gravity: false,
 			door: true,
 			doorDestination: 2
@@ -85,7 +57,6 @@ window.Rooms = [
 			width: 50,
 			height: 100,
 			color: "#000000",
-			collisionType: "actor",
 			gravity: false,
 			door: true,
 			doorDestination: 0
@@ -98,23 +69,9 @@ window.Rooms = [
 			width: 50,
 			height: 50,
 			color: "#FF7777",
-			collisionType: "actor",
+			collidable: true,
 			gravity: true,
-			player: true,
-			wraps: true
-		},
-		{
-			x: 900,
-			y: 750,
-			dx: 0,
-			dy: 0,
-			width: 25,
-			height: 25,
-			color: "#7777FF",
-			collisionType: "actor",
-			gravity: true,
-			camera: true,
-			grabbable: true
+			player: true
 		}
 	]
 ];
