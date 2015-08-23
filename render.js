@@ -33,23 +33,14 @@ window.Render = (function() {
 
 	return {
 		runSystem: function(model) {
-			if(scrollAmount === undefined) {
-				scrollAmount = 0;
-			} else {
-				model.getEntities().filter(function(e) {
-					return e.player === true;
-				}).forEach(function(p) {
-					if(Entity.getLeft(p) - scrollAmount < canvas.width / 3) {
-						scrollAmount = Entity.getLeft(p) - canvas.width / 3;
-					}
-					if(Entity.getRight(p) - scrollAmount > canvas.width * 2 / 3) {
-						scrollAmount = Entity.getRight(p) - canvas.width * 2 / 3;
-					}
-				});
-			}
+			model.getEntities().filter(function(e) {
+				return e.player === true;
+			}).forEach(function(p) {
+				scrollAmount = Entity.getLeft(p) - canvas.width / 2;
+			});
 
 			context.clearRect(0, 0, canvas.width, canvas.height);
-			
+
 			model.getEntities().forEach(function(entity) {
 				renderEntity(entity);
 			});
