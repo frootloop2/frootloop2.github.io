@@ -23,7 +23,8 @@ window.Physics = (function() {
 				nearEdge,
 				farEdge;
 				distanceToNearestEntity = Infinity;
-				nearEdge = (entity.dx > 0) ? Entity.getLeft : Entity.getRight;
+
+			nearEdge = (entity.dx > 0) ? Entity.getLeft : Entity.getRight;
 			farEdge = (entity.dx > 0) ? Entity.getRight: Entity.getLeft;
 				model.getEntities().filter(function(otherEntity) {
 				var otherEntityOverlapsEntityZone,
@@ -97,10 +98,12 @@ window.Physics = (function() {
 				angleToPlayer,
 				turnAmount = 2,
 				maxReturnSpeed = 15,
+				dx,
 				dy,
 				distanceToNearestEntity,
 				nearEdge,
-				farEdge;
+				farEdge,
+				angleThreshold = 15;
 
 			b.boomerangLife--;
 			if(b.boomerangLife <= 0) {
@@ -119,52 +122,37 @@ window.Physics = (function() {
 
 			if(b.boomerangMode === "leaving") {
 				// step X
-				/*
-				if rang is moving right
-					find closest left side within dx of rang
-					if dist to closest left side < dx
-						move dist to closest left side
-						angle change
-						move dx - dist to closest left side
-						if impact angle is 'sharp'
-							start returning-mode
-					else
-						move dx
-				if rang is moving left
-					find closest right side within dx of rang
-					if dist to closest right side < dx
-						move dist to closest right side
-						angle change
-						move dx - dist to closest right side
-						if impact angle is 'sharp'
-							start returning-mode
-					else
-						move dx
-				*/
-				b.x += b.boomerangSpeed * Math.cos(2 * Math.PI * b.boomerangAngle / 360);
-				// step Y
-				/*
-				if rang is moving up
-					find closest bottom side within dy of rang
-					if dist to closest bottom side < dy
-						move dist to closest bottom side
-						angle change
-						move dy - dist to closest bottom side
-						if impact angle is 'sharp'
-							start returning-mode
-					else
-						move dy
-				if rang is moving down
-					find closest top side within dy of rang
-					if dist to closest top side < dy
-						move dist to closest top side
-						angle change
-						move dy - dist to closest top side
-						if impact angle is 'sharp'
-							start returning-mode
-					else
-						move dy
-				*/
+				dx = b.boomerangSpeed * Math.cos(2 * Math.PI * b.boomerangAngle / 360);
+				distanceToNearestEntity = Infinity;
+
+				nearEdge = (dx > 0) ? Entity.getLeft : Entity.getRight;
+				farEdge = (dx > 0) ? Entity.getRight : Entity.getLeft;
+
+				model.getEntities().filter(function(otherEntity) {
+					var otherEntityOverlapsEntityZone,
+						otherEntityInDirectionOfEntityMovement;
+
+					otherEntityOverlapsEntityZone = Entity.getTop(b) > Entity.getBottom(otherEntity) && Entity.getBottom(b) < Entity.getTop(otherEntity);
+					otherEntityInDirectionOfEntityMovement = (nearEdge(otherEntity) - b.x) * (farEdge(b) - b.x) >= 0;
+					return b !== otherEntity && otherEntity.collidable && otherEntityOverlapsEntityZone && otherEntityInDirectionOfEntityMovement;
+				}).forEach(function(otherEntity) {
+					var distanceToOtherEntity;
+					
+					distanceToOtherEntity = nearEdge(otherEntity) - farEdge(b);
+					distanceToNearestEntity = closestToValue(0, distanceToOtherEntity, distanceToNearestEntity);
+				});
+				b.x += closestToValue(0, distanceToNearestEntity, dx);
+				if(Math.abs(distanceToNearestEntity) < Math.abs(dx)) {
+					if(getShortestDistBetweenAngles(b.boomerangAngle, 0) < angleThreshold || getShortestDistBetweenAngles(b.boomerangAngle, 180) < angleThreshold) {
+						b.boomerangMode = "returning";
+						b.boomerangAngle = (b.boomerangAngle - 180 + 360) % 360;
+					} else {
+						b.boomerangAngle = (-b.boomerangAngle + 180 + 360) % 360;
+						b.x += dx - distanceToNearestEntity;
+					}
+				}
+
+				//step Y
 				dy = b.boomerangSpeed * Math.sin(2 * Math.PI * b.boomerangAngle / 360);
 				distanceToNearestEntity = Infinity;
 
@@ -186,25 +174,14 @@ window.Physics = (function() {
 				});
 				b.y += closestToValue(0, distanceToNearestEntity, dy);
 				if(Math.abs(distanceToNearestEntity) < Math.abs(dy)) {
-					// TODO: angle change
-					b.y += dy - distanceToNearestEntity;
+					if(getShortestDistBetweenAngles(b.boomerangAngle, 90) < angleThreshold || getShortestDistBetweenAngles(b.boomerangAngle, 270) < angleThreshold) {
+						b.boomerangMode = "returning";
+						b.boomerangAngle = (b.boomerangAngle - 180 + 360) % 360;
+					} else {
+						b.boomerangAngle = (-b.boomerangAngle + 360) % 360;
+						b.y += dy - distanceToNearestEntity;
+					}
 				}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 				b.boomerangSpeed = (b.boomerangSpeed - 1 + 360) % 360;
 
@@ -232,7 +209,6 @@ window.Physics = (function() {
 					b.boomerangAngle = (b.boomerangAngle - turnAmount + 360) % 360;
 				}
 				
-
 				b.x += b.boomerangSpeed * Math.cos(2 * Math.PI * b.boomerangAngle / 360);
 				b.y += b.boomerangSpeed * Math.sin(2 * Math.PI * b.boomerangAngle / 360);
 			}

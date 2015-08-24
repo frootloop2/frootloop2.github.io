@@ -11,7 +11,15 @@ window.Rooms = [
 		},
 		{
 			x: 1200,
-			y: 150,
+			y: 400,
+			width: 100,
+			height: 1200,
+			color: "#777777",
+			collidable: true
+		},
+		{
+			x: 1300,
+			y: 450,
 			width: 50,
 			height: 100,
 			color: "#000000",
