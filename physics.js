@@ -120,6 +120,11 @@ window.Physics = (function() {
 
 			angleToPlayer = ((xPositive * 180 + Math.atan(vectorToPlayer.y / vectorToPlayer.x) * 360 / (2 * Math.PI)) + 360) % 360
 
+			if(Entity.overlapsEntity(b, b.destEntity)) {
+				model.getEntities().splice(model.getEntities().indexOf(b), 1);
+				return;
+			}
+
 			if(b.boomerangMode === "leaving") {
 				// step X
 				dx = b.boomerangSpeed * Math.cos(2 * Math.PI * b.boomerangAngle / 360);
@@ -191,11 +196,6 @@ window.Physics = (function() {
 					b.boomerangAngle = angleToPlayer;
 				}
 			} else if(b.boomerangMode === "returning") {
-				if(Entity.overlapsEntity(b, b.destEntity)) {
-					model.getEntities().splice(model.getEntities().indexOf(b), 1);
-					return;
-				}
-
 				if(b.boomerangSpeed <= maxReturnSpeed) {
 					b.boomerangSpeed++;
 				}

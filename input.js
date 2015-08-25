@@ -72,7 +72,7 @@ window.Input = (function() {
 						}
 
 						if(!playerEntity.playerFacingRight) {
-							newBoomerang.boomerangAngle = (-newBoomerang.boomerangAngle + 180) % 360;
+							newBoomerang.boomerangAngle = (-newBoomerang.boomerangAngle + 180 + 360) % 360;
 						}
 
 						model.getEntities().push(newBoomerang);
