@@ -72,18 +72,21 @@ window.Input = (function() {
 						}
 
 						if(!playerEntity.playerFacingRight) {
+							newBoomerang.x -= playerEntity.width;
 							newBoomerang.boomerangAngle = (-newBoomerang.boomerangAngle + 180 + 360) % 360;
+						} else {
+							newBoomerang.x += playerEntity.width;
 						}
 
-						model.getEntities().push(newBoomerang);
+						if(model.getEntities().filter(function(e) {return e.collidable && Entity.overlapsEntity(e, newBoomerang)}).length === 0) {
+							model.getEntities().push(newBoomerang);
+						}
 					}
 				}
 
 				// use door
 				if(Keyboard.isKeyPressedSinceStartOfLastFrame(doorKey)) {
-					model.getEntities().filter(function(entity) {
-						return entity.door;
-					}).forEach(function(doorEntity) {
+					model.getEntities().filter(function(entity) {return entity.door}).forEach(function(doorEntity) {
 						if(Entity.overlapsEntity(playerEntity, doorEntity)) {
 							model.loadRoom(doorEntity.doorDestination);
 						}

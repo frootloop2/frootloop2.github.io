@@ -101,9 +101,10 @@ window.Physics = (function() {
 				dx,
 				dy,
 				distanceToNearestEntity,
+				nearestEntity,
 				nearEdge,
 				farEdge,
-				angleThreshold = 15;
+				angleThreshold = 50;
 
 			b.boomerangLife--;
 			if(b.boomerangLife <= 0) {
@@ -139,15 +140,30 @@ window.Physics = (function() {
 
 					otherEntityOverlapsEntityZone = Entity.getTop(b) > Entity.getBottom(otherEntity) && Entity.getBottom(b) < Entity.getTop(otherEntity);
 					otherEntityInDirectionOfEntityMovement = (nearEdge(otherEntity) - b.x) * (farEdge(b) - b.x) >= 0;
-					return b !== otherEntity && otherEntity.collidable && otherEntityOverlapsEntityZone && otherEntityInDirectionOfEntityMovement;
+					return b !== otherEntity && (otherEntity.collidable || otherEntity.target) && otherEntityOverlapsEntityZone && otherEntityInDirectionOfEntityMovement;
 				}).forEach(function(otherEntity) {
 					var distanceToOtherEntity;
 					
 					distanceToOtherEntity = nearEdge(otherEntity) - farEdge(b);
 					distanceToNearestEntity = closestToValue(0, distanceToOtherEntity, distanceToNearestEntity);
+					if(distanceToNearestEntity === distanceToOtherEntity) {
+						nearestEntity = otherEntity;
+					}
 				});
 				b.x += closestToValue(0, distanceToNearestEntity, dx);
 				if(Math.abs(distanceToNearestEntity) < Math.abs(dx)) {
+					if(nearestEntity.player === true) {
+						model.getEntities().splice(model.getEntities().indexOf(b), 1);
+						return;
+					}
+					if(nearestEntity.target === true) {
+						nearestEntity.target = undefined;
+						nearestEntity.width /= 2;
+						nearestEntity.height /= 2;
+						nearestEntity.color = "#777777";
+						nearestEntity.collidable = true;
+						//model.getEntities().splice(model.getEntities().indexOf(nearestEntity), 1);
+					}
 					if(getShortestDistBetweenAngles(b.boomerangAngle, 0) < angleThreshold || getShortestDistBetweenAngles(b.boomerangAngle, 180) < angleThreshold) {
 						b.boomerangMode = "returning";
 						b.boomerangAngle = (b.boomerangAngle - 180 + 360) % 360;
@@ -158,6 +174,7 @@ window.Physics = (function() {
 				}
 
 				//step Y
+				nearestEntity = undefined
 				dy = b.boomerangSpeed * Math.sin(2 * Math.PI * b.boomerangAngle / 360);
 				distanceToNearestEntity = Infinity;
 
@@ -176,9 +193,25 @@ window.Physics = (function() {
 					
 					distanceToOtherEntity = nearEdge(otherEntity) - farEdge(b);
 					distanceToNearestEntity = closestToValue(0, distanceToOtherEntity, distanceToNearestEntity);
+					if(distanceToNearestEntity === distanceToOtherEntity) {
+						nearestEntity = otherEntity;
+					}
 				});
 				b.y += closestToValue(0, distanceToNearestEntity, dy);
 				if(Math.abs(distanceToNearestEntity) < Math.abs(dy)) {
+					if(nearestEntity.player === true) {
+						model.getEntities().splice(model.getEntities().indexOf(b), 1);
+						return;
+					}
+					if(nearestEntity.target === true) {
+						nearestEntity.target = undefined;
+						nearestEntity.width /= 2;
+						nearestEntity.height /= 2;
+						nearestEntity.color = "#777777";
+						nearestEntity.collidable = true;
+						//model.getEntities().splice(model.getEntities().indexOf(nearestEntity), 1);
+					}
+					
 					if(getShortestDistBetweenAngles(b.boomerangAngle, 90) < angleThreshold || getShortestDistBetweenAngles(b.boomerangAngle, 270) < angleThreshold) {
 						b.boomerangMode = "returning";
 						b.boomerangAngle = (b.boomerangAngle - 180 + 360) % 360;
@@ -199,6 +232,17 @@ window.Physics = (function() {
 				if(b.boomerangSpeed <= maxReturnSpeed) {
 					b.boomerangSpeed++;
 				}
+
+				model.getEntities().filter(function(e){return e.target}).forEach(function(t) {
+					if(Entity.overlapsEntity(b, t)) {
+						t.target = undefined;
+						t.width /= 2;
+						t.height /= 2;
+						t.color = "#777777";
+						t.collidable = true;
+						//model.getEntities().splice(model.getEntities().indexOf(t), 1);
+					}
+				});
 
 				// turn towards player
 				if(getShortestDistBetweenAngles(angleToPlayer, b.boomerangAngle) < turnAmount) {
