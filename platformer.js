@@ -1,14 +1,12 @@
 (function() {
-	var model,
-		systems;
+	var model = Model.create(),
+		systems = [
+			window.Input,
+			window.Physics,
+			window.Render
+		];
 
-	model = Model.create();
 	model.loadRoom(0);
-	systems = [
-		window.Input,
-		window.Physics,
-		window.Render
-	];		
 
 	function gameLoop() {
 		Keyboard.tickFrame();
@@ -17,6 +15,6 @@
 		});
 		requestAnimationFrame(gameLoop);
 	};
-
+	
 	gameLoop();
 }());

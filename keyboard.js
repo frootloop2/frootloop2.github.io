@@ -20,15 +20,13 @@ window.Keyboard = (function() {
 	});
 	return {
 		Keys: {
-			SPACE: 32,
-			
 			LEFT:  37,
 			UP:	38,
 			RIGHT: 39,
 			DOWN:  40,
-			
 			A: 65,
 			C: 67,
+			D: 68,
 			X: 88,
 			Z: 90
 		},

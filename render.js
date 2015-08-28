@@ -20,7 +20,7 @@ window.Render = (function() {
 	};
 
 	context = canvas.getContext("2d");
-
+	
 	function renderEntity(entity) {
 		context.fillStyle = entity.color;
 		context.fillRect((Entity.getLeft(entity) - scrollAmount), // x
@@ -31,8 +31,16 @@ window.Render = (function() {
 		);
 	};
 
+	function renderText(text, x, y, size, color) {
+		context.font = size + "px Arial";
+		context.fillStyle = color;
+		context.fillText(text, x, y); 
+	};
+
 	return {
 		runSystem: function(model) {
+			var time;
+
 			model.getEntities().filter(function(e) {
 				return e.player === true;
 			}).forEach(function(p) {
@@ -44,6 +52,12 @@ window.Render = (function() {
 			model.getEntities().forEach(function(entity) {
 				renderEntity(entity);
 			});
+
+			time = model.getTime();
+			time = Number(time / 1000).toFixed(2);
+
+			renderText("Time: " + time, 10, 24, 24, "#000000");			
+			renderText("Targets Remaining: " + model.getTargetsRemaining(), 10, 50, 24, "#000000");
 		}
 	};
 }());

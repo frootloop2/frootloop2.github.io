@@ -57,7 +57,7 @@ window.Input = (function() {
 							y: playerEntity.y,
 							width: 30,
 							height: 30,
-							color: "#FF7777",
+							color: "#77FF77",
 							destEntity: playerEntity,						
 							boomerang: true,
 							boomerangSpeed: 30,

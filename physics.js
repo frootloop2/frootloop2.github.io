@@ -121,6 +121,7 @@ window.Physics = (function() {
 
 			angleToPlayer = ((xPositive * 180 + Math.atan(vectorToPlayer.y / vectorToPlayer.x) * 360 / (2 * Math.PI)) + 360) % 360
 
+			// catch
 			if(Entity.overlapsEntity(b, b.destEntity)) {
 				model.getEntities().splice(model.getEntities().indexOf(b), 1);
 				return;
@@ -157,12 +158,11 @@ window.Physics = (function() {
 						return;
 					}
 					if(nearestEntity.target === true) {
-						nearestEntity.target = undefined;
-						nearestEntity.width /= 2;
-						nearestEntity.height /= 2;
-						nearestEntity.color = "#777777";
-						nearestEntity.collidable = true;
-						//model.getEntities().splice(model.getEntities().indexOf(nearestEntity), 1);
+						model.getEntities().splice(model.getEntities().indexOf(nearestEntity), 1);
+						if(model.getTargetsRemaining() === 0) {
+							model.loadRoom(model.getRoomNum() + 1);
+							return;
+						}
 					}
 					if(getShortestDistBetweenAngles(b.boomerangAngle, 0) < angleThreshold || getShortestDistBetweenAngles(b.boomerangAngle, 180) < angleThreshold) {
 						b.boomerangMode = "returning";
@@ -204,12 +204,11 @@ window.Physics = (function() {
 						return;
 					}
 					if(nearestEntity.target === true) {
-						nearestEntity.target = undefined;
-						nearestEntity.width /= 2;
-						nearestEntity.height /= 2;
-						nearestEntity.color = "#777777";
-						nearestEntity.collidable = true;
-						//model.getEntities().splice(model.getEntities().indexOf(nearestEntity), 1);
+						model.getEntities().splice(model.getEntities().indexOf(nearestEntity), 1);
+						if(model.getTargetsRemaining() === 0) {
+							model.loadRoom(model.getRoomNum() + 1);
+							return;
+						}
 					}
 					
 					if(getShortestDistBetweenAngles(b.boomerangAngle, 90) < angleThreshold || getShortestDistBetweenAngles(b.boomerangAngle, 270) < angleThreshold) {
@@ -235,12 +234,11 @@ window.Physics = (function() {
 
 				model.getEntities().filter(function(e){return e.target}).forEach(function(t) {
 					if(Entity.overlapsEntity(b, t)) {
-						t.target = undefined;
-						t.width /= 2;
-						t.height /= 2;
-						t.color = "#777777";
-						t.collidable = true;
-						//model.getEntities().splice(model.getEntities().indexOf(t), 1);
+						model.getEntities().splice(model.getEntities().indexOf(t), 1);
+						if(model.getTargetsRemaining() === 0) {
+							model.loadRoom(model.getRoomNum() + 1);
+							return;
+						}
 					}
 				});
 
