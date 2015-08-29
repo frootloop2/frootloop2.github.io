@@ -187,7 +187,7 @@ window.Physics = (function() {
 
 					otherEntityOverlapsEntityZone = Entity.getRight(b) > Entity.getLeft(otherEntity) && Entity.getLeft(b) < Entity.getRight(otherEntity);
 					otherEntityInDirectionOfEntityMovement = (nearEdge(otherEntity) - b.y) * (farEdge(b) - b.y) >= 0;
-					return b !== otherEntity && otherEntity.collidable && otherEntityOverlapsEntityZone && otherEntityInDirectionOfEntityMovement;
+					return b !== otherEntity && (otherEntity.collidable || otherEntity.target) && otherEntityOverlapsEntityZone && otherEntityInDirectionOfEntityMovement;
 				}).forEach(function(otherEntity) {
 					var distanceToOtherEntity;
 					
